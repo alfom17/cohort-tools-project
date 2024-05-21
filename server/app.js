@@ -2,11 +2,22 @@ require('dotenv').config()
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const PORT = 5005;
 
 const cohorts = require('./cohorts.json')
 const students = require('./students.json')
+
+// app.js
+
+// ...
+mongoose
+  .connect("mongodb://127.0.0.1:27017/mongoose-example-dev")
+  .then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
+  .catch(err => console.error("Error connecting to MongoDB", err));
+
+// ...
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
@@ -33,6 +44,18 @@ app.use(cookieParser());
 // ...
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
+});
+
+
+app.get("/student", (req, res) => {
+  Book.find({})
+    .then((student) => {
+      res.json(student);
+    })
+    .catch((error) => {
+      console.error("Error while retrieving student ->", error);
+      res.status(500).json({ error: "Failed to retrieve student" });
+    });
 });
 
 
