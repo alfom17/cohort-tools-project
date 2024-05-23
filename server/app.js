@@ -112,7 +112,15 @@ app.get("/api/students/cohorts/:cohortId", async (req, res, next) => {
   }
 
   });
-  
+  /*router.get("/cohort/:cohortId",async (req,res,next)=>{
+    try {
+      const respuesta = await StudentSchema.find({cohort:req.params.cohortId})
+      .populate("cohort")
+      res.status(200).json(respuesta)
+    } catch (error) {
+      next(error)
+    }
+  }) */
 
 //--------------------------------------------------------------------
 app.get("/api/students/:studentId", async (req, res, next) => {
