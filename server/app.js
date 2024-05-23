@@ -53,7 +53,7 @@ const Student = require("./models/students_model");
     });
 });*/
 
-app.post("/api/students", (req, res) => {
+app.post("/api/students", (req, res, next) => {
   console.log(req.body);
 
   Student.create({
@@ -74,70 +74,77 @@ app.post("/api/students", (req, res) => {
     })
     .catch((error) => {
       console.log(error);
-      res.json(error);
+      next(error);
     });
 });
 
-app.get("/api/students", async (req, res) => {
+app.get("/api/students", async (req, res, next) => {
   try {
-    const response = await Student.find();
+    const response = await Student.find()
     console.log(response);
     res.json(response);
   } catch (error) {
-    res.json(error);
+    next(error);
+  }
+});
+//--------------------------------------------------------------------
+/*app.get("/api/students/cohorts/:cohortId", async (req, res, next) => {
+  console.log("recupera estudiante");
+  console.log(req.params);
+  try {
+    const response = await Student.findById(Cohort.findById(req.params.cohortId)).populate("cohortId");
+    res.json(response);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});*/
+
+app.get("/api/students/cohorts/:cohortId", async (req, res, next) => {
+  console.log("recupera estudiante");
+  console.log(req.params);
+  try {
+    const students = await Student.find({ cohort: req.params.cohortId }).populate('cohort');
+    res.json(students);
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 });
 
-
-app.get("/api/students/cohort/:cohortId", async (req, res) => {
-  console.log("reupera estudiante");
+//--------------------------------------------------------------------
+app.get("/api/students/:studentId", async (req, res, next) => {
+  console.log("recupera estudiante");
   console.log(req.params);
   try {
     const response = await Student.findById(req.params.studentId);
     res.json(response);
   } catch (error) {
     console.log(error);
-    res.json(error);
+    next(error);
   }
 });
-
-
-app.get("/api/students/:studentId", async (req, res) => {
-  console.log("reupera estudiante");
-  console.log(req.params);
-  try {
-    const response = await Student.findById(req.params.studentId);
-    res.json(response);
-  } catch (error) {
-    console.log(error);
-    res.json(error);
-  }
-});
-
-
 
 app.put("/api/students/:studentId", async (req, res) => {
- try {
-  await Student.findByIdAndUpdate(req.params.studentId, {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    phone: req.body.phone,
-    linkedinUrl: req.body.linkedinUrl,
-    languages: req.body.languages,
-    program: req.body.program,
-    background: req.body.background,
-    image: req.body.image,
-    projects: req.body.projects,
-
-  })
-  res.json("student editado")
-
- } catch (error) {
-  console.log(error)
-  res.json(error);
- }
-})
+  try {
+    await Student.findByIdAndUpdate(req.params.studentId, {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      phone: req.body.phone,
+      linkedinUrl: req.body.linkedinUrl,
+      languages: req.body.languages,
+      program: req.body.program,
+      background: req.body.background,
+      image: req.body.image,
+      projects: req.body.projects,
+    });
+    res.json("student editado");
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+});
 
 app.delete("/api/students/:studentId", async (req, res) => {
   try {
@@ -158,14 +165,14 @@ app.post("/api/cohorts", (req, res) => {
   Cohort.create({
     inProgress: req.body.inProgress,
     cohortSlug: req.body.cohortSlug,
-    cohortName:req.body.cohortName,
+    cohortName: req.body.cohortName,
     program: req.body.program,
     campus: req.body.campus,
     startDate: req.body.startDate,
     endDate: req.body.endDate,
     programManager: req.body.programManager,
     leadTeacher: req.body.leadTeacher,
-    totalHours: req.body.totalHours
+    totalHours: req.body.totalHours,
   })
     .then(() => {
       console.log("cohort creado");
@@ -177,7 +184,6 @@ app.post("/api/cohorts", (req, res) => {
     });
 });
 
-
 app.get("/api/cohorts", async (req, res) => {
   try {
     const response = await Cohort.find();
@@ -188,10 +194,8 @@ app.get("/api/cohorts", async (req, res) => {
   }
 });
 
-
-
 app.get("/api/cohorts/:cohortId", async (req, res) => {
-  console.log("reupera cohorts");
+  console.log("recupera cohorts");
   console.log(req.params);
   try {
     const response = await Cohort.findById(req.params.cohortId);
@@ -204,30 +208,27 @@ app.get("/api/cohorts/:cohortId", async (req, res) => {
 
 app.put("/api/cohorts/:cohortId", async (req, res) => {
   console.log(req.body);
- try {
-  await Cohort.findByIdAndUpdate(req.params.cohortId,{
-    inProgress: req.body.inProgress,
-    cohortSlug: req.body.cohortSlug,
-    cohortName:req.body.cohortName,
-    program: req.body.program,
-    campus: req.body.campus,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
-    programManager: req.body.programManager,
-    leadTeacher: req.body.leadTeacher,
-    totalHours: req.body.totalHours
-  })
-  res.json("cohort editado")
+  try {
+    await Cohort.findByIdAndUpdate(req.params.cohortId, {
+      inProgress: req.body.inProgress,
+      cohortSlug: req.body.cohortSlug,
+      cohortName: req.body.cohortName,
+      program: req.body.program,
+      campus: req.body.campus,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      programManager: req.body.programManager,
+      leadTeacher: req.body.leadTeacher,
+      totalHours: req.body.totalHours,
+    });
+    res.json("cohort editado");
+  } catch (error) {
+    console.log(error);
+    res.json(error);
+  }
+});
 
- } catch (error) {
-  console.log(error)
-  res.json(error);
- }
-})
-  
-
-
-app.delete("/api/cohorts/:cohortId", async (req, res) => {
+app.delete("/api/cohorts/:cohortId", async (req, res,) => {
   try {
     await Cohort.findByIdAndDelete(req.params.cohortId);
     res.json("cohort borrado");
@@ -236,19 +237,16 @@ app.delete("/api/cohorts/:cohortId", async (req, res) => {
     res.json(error);
   }
 });
- 
 
+//------GESTOR DE ERRORES
 
+app.use((req, res) => {
+  res.status(404).json({ errorMessage: "ruta no encontrada" });
+});
 
-
-
-
-
-
-
-
-
-
+app.use((err, req, res, next) => {
+  res.status(500).json({errorMessage: "problemas con el servidor inentelo más tarde"});
+});
 
 // START SERVER
 app.listen(PORT, () => {
