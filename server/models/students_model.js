@@ -15,7 +15,10 @@ const studentSchema = new mongoose.Schema({
     background: String,
     image: String,
     projects: [],
-    
+    cohort: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cohort"
+    }
 });
 
 

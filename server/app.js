@@ -108,9 +108,11 @@ app.get("/api/students/cohorts/:cohortId", async (req, res, next) => {
     res.json(students);
   } catch (error) {
     console.log(error);
-    next(error);
+    next(error)
   }
-});
+
+  });
+  
 
 //--------------------------------------------------------------------
 app.get("/api/students/:studentId", async (req, res, next) => {
