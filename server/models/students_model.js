@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 // CREATE SCHEMA
 // Schema - describes and enforces the structure of the documents
-const studentSchema = new mongoose.Schema({
+const studentSchema = new Schema({
     firstName: String,
     lastName: String,
     email: String,
