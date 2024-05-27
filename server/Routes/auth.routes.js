@@ -84,6 +84,7 @@ router.post("/login", async (req, res, next) => {
 
     res.status(200).json({ authToken: authToken });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });
